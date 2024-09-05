@@ -1,0 +1,23 @@
+GET http://localhost:3009/
+
+###
+GET http://localhost:3009/products
+
+
+###
+GET http://localhost:3009/cart
+
+###
+GET http://localhost:3009/products/123
+
+###
+POST http://localhost:3009/cart
+Content-Type: application/json
+
+{
+    "productId": 123
+}
+
+###
+DELETE  http://localhost:3009/cart/123
+Content-Type: application/json
