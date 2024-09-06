@@ -15,9 +15,9 @@ POST http://localhost:3009/cart
 Content-Type: application/json
 
 {
-    "productId": 123
+    "productId": 234
 }
 
 ###
-DELETE  http://localhost:3009/cart/123
+DELETE  http://localhost:3009/cart/234
 Content-Type: application/json

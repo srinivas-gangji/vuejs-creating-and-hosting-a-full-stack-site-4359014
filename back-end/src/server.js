@@ -26,23 +26,39 @@ app.get("/products/:productId", (req, res) => {
   res.json(product);
 });
 
+function populateCartIds(ids) {
+  const cartProducts = ids.map((id) => products.find((p) => p.id === id));
+
+  return cartProducts;
+}
+
 app.get("/cart", (req, res) => {
-  res.json(cartItems);
+  const cartProducts = populateCartIds(cartItems);
+
+  res.json(cartProducts);
 });
 
 app.post("/cart", (req, res) => {
   const { productId } = req.body;
   const product = products.find((p) => parseInt(p.id, 10) === productId);
-  cartItems.push(product);
-  res.json(cartItems);
+  if (!product) {
+    res.status(404).json({ error: "Product not found" });
+    return;
+  }
+  cartItems.push(product.id);
+  const cartProducts = populateCartIds(cartItems);
+
+  res.json(cartProducts);
 });
 
 app.delete("/cart/:productId", (req, res) => {
   const { productId } = req.params;
   cartItems = cartItems.filter(
-    (p) => parseInt(p.id, 10) !== parseInt(productId, 10)
+    (id) => parseInt(id, 10) !== parseInt(productId, 10)
   );
-  res.json(cartItems);
+
+  const cartProducts = populateCartIds(cartItems);
+  res.json(cartProducts);
 });
 
 app.listen(3009, () => {
