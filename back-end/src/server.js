@@ -1,66 +1,117 @@
 import express from "express";
 import bodyParser from "body-parser";
-import {
-  products as productsRaw,
-  cartItems as cartItemsRaw,
-} from "./temp-data.js";
 
-let cartItems = cartItemsRaw;
-let products = productsRaw;
+import { MongoClient, ServerApiVersion } from "mongodb";
 
-const app = express();
+async function start() {
+  const uri =
+    "mongodb+srv://srigd:eyuzN2TGdTGX6bJs@linkedin-vuejscourse-01.jkxpp.mongodb.net/?retryWrites=true&w=majority&appName=linkedin-vuejscourse-01";
+  // Create a MongoClient with a MongoClientOptions object to set the Stable API version
+  const client = new MongoClient(uri, {
+    serverApi: {
+      version: ServerApiVersion.v1,
+      strict: true,
+      deprecationErrors: true,
+    },
+  });
 
-app.use(bodyParser.json());
+  await client.connect();
+  const db = client.db("fsv-db");
 
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
+  const app = express();
+  app.use(bodyParser.json());
 
-app.get("/products", (req, res) => {
-  res.json(products);
-});
+  app.get("/", (req, res) => {
+    res.send("Hello World!");
+  });
 
-app.get("/products/:productId", (req, res) => {
-  const { productId } = req.params;
-  const product = products.find((p) => p.id === productId);
-  res.json(product);
-});
+  app.get("/products", async (req, res) => {
+    try {
+      const products = await db.collection("products").find({}).toArray();
+      res.json(products);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch products" });
+    }
+  });
 
-function populateCartIds(ids) {
-  const cartProducts = ids.map((id) => products.find((p) => p.id === id));
+  app.get("/products/:productId", async (req, res) => {
+    try {
+      const { productId } = req.params;
+      const product = await db
+        .collection("products")
+        .findOne({ id: productId });
+      res.json(product);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch product" });
+    }
+  });
 
-  return cartProducts;
+  async function populateCartIds(ids) {
+    return Promise.all(
+      ids.map(async (id) => {
+        const product = await db.collection("products").findOne({ id });
+        return product;
+      })
+    );
+  }
+
+  app.get("/users/:userId/cart", async (req, res) => {
+    try {
+      const user = await db
+        .collection("users")
+        .findOne({ id: req.params.userId });
+      const cartProducts = await populateCartIds(user.cartItems);
+      res.json(cartProducts);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch cart items" });
+    }
+  });
+
+  app.post("/users/:userId/cart", async (req, res) => {
+    const { productId } = req.body;
+
+    try {
+      await db
+        .collection("users")
+        .updateOne(
+          { id: req.params.userId },
+          { $addToSet: { cartItems: productId.toString() } }
+        );
+      const user = await db
+        .collection("users")
+        .findOne({ id: req.params.userId });
+      const cartProducts = await populateCartIds(user.cartItems);
+      res.json(cartProducts);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ error: "Failed to add product to cart" });
+    }
+  });
+
+  app.delete("/users/:userId/cart/:productId", async (req, res) => {
+    const { productId, userId } = req.params;
+
+    try {
+      await db
+        .collection("users")
+        .updateOne(
+          { id: userId },
+          { $pull: { cartItems: productId.toString() } }
+        );
+      const user = await db
+        .collection("users")
+        .findOne({ id: req.params.userId });
+      const cartProducts = await populateCartIds(user.cartItems);
+      res.json(cartProducts);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ error: "Failed to remove product from cart" });
+    }
+  });
+
+  app.listen(3009, () => {
+    console.log("Server running on port 3009");
+  });
 }
 
-app.get("/cart", (req, res) => {
-  const cartProducts = populateCartIds(cartItems);
-
-  res.json(cartProducts);
-});
-
-app.post("/cart", (req, res) => {
-  const { productId } = req.body;
-  const product = products.find((p) => parseInt(p.id, 10) === productId);
-  if (!product) {
-    res.status(404).json({ error: "Product not found" });
-    return;
-  }
-  cartItems.push(product.id);
-  const cartProducts = populateCartIds(cartItems);
-
-  res.json(cartProducts);
-});
-
-app.delete("/cart/:productId", (req, res) => {
-  const { productId } = req.params;
-  cartItems = cartItems.filter(
-    (id) => parseInt(id, 10) !== parseInt(productId, 10)
-  );
-
-  const cartProducts = populateCartIds(cartItems);
-  res.json(cartProducts);
-});
-
-app.listen(3009, () => {
-  console.log("Server running on port 3009");
-});
+start();

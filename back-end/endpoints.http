@@ -5,19 +5,19 @@ GET http://localhost:3009/products
 
 
 ###
-GET http://localhost:3009/cart
+GET http://localhost:3009/users/12345/cart
 
 ###
 GET http://localhost:3009/products/123
 
 ###
-POST http://localhost:3009/cart
+POST http://localhost:3009/users/12345/cart
 Content-Type: application/json
 
 {
-    "productId": 234
+    "productId": 456
 }
 
 ###
-DELETE  http://localhost:3009/cart/234
+DELETE  http://localhost:3009/users/12345/cart/456
 Content-Type: application/json
