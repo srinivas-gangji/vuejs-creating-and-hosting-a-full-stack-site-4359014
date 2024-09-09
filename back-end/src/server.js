@@ -1,7 +1,11 @@
 import express from "express";
 import bodyParser from "body-parser";
-
+import path from "path";
 import { MongoClient, ServerApiVersion } from "mongodb";
+import { fileURLToPath } from "node:url";
+import { dirname } from "node:path";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 async function start() {
   const uri =
@@ -20,12 +24,15 @@ async function start() {
 
   const app = express();
   app.use(bodyParser.json());
+  //static folder
+  console.log(path.join(__dirname, "../assets"));
+  app.use("/images", express.static(path.join(__dirname, "../assets")));
 
   app.get("/", (req, res) => {
     res.send("Hello World!");
   });
 
-  app.get("/products", async (req, res) => {
+  app.get("/api/products", async (req, res) => {
     try {
       const products = await db.collection("products").find({}).toArray();
       res.json(products);
@@ -34,7 +41,7 @@ async function start() {
     }
   });
 
-  app.get("/products/:productId", async (req, res) => {
+  app.get("/api/products/:productId", async (req, res) => {
     try {
       const { productId } = req.params;
       const product = await db
@@ -55,7 +62,7 @@ async function start() {
     );
   }
 
-  app.get("/users/:userId/cart", async (req, res) => {
+  app.get("/api/users/:userId/cart", async (req, res) => {
     try {
       const user = await db
         .collection("users")
@@ -67,7 +74,7 @@ async function start() {
     }
   });
 
-  app.post("/users/:userId/cart", async (req, res) => {
+  app.post("/api/users/:userId/cart", async (req, res) => {
     const { productId } = req.body;
 
     try {
@@ -88,7 +95,7 @@ async function start() {
     }
   });
 
-  app.delete("/users/:userId/cart/:productId", async (req, res) => {
+  app.delete("/api/users/:userId/cart/:productId", async (req, res) => {
     const { productId, userId } = req.params;
 
     try {

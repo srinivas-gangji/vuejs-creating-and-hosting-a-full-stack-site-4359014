@@ -3,13 +3,17 @@
     <article class="media">
       <figure class="media-left">
         <p class="image is-64x64">
-          <img :src="product.imageName" />
+          <img :src="product.imageUrl" />
         </p>
       </figure>
       <div class="media-content">
         <div class="content">
           <p>
-            <strong class="mr-2">{{ product.name }}</strong>
+            <strong class="mr-2"
+              ><RouterLink :to="`/details/${product.id}`">
+                {{ product.name }}</RouterLink
+              ></strong
+            >
             <small>{{ product.price }}</small>
             <small>31m</small>
             <br />
@@ -20,7 +24,10 @@
         </div>
       </div>
       <div class="media-right">
-        <button class="delete"></button>
+        <button
+          class="delete"
+          @click.prevent="$emit('remove', product)"
+        ></button>
       </div>
     </article>
   </div>

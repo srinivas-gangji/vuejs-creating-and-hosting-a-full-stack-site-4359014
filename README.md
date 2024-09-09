@@ -33,3 +33,5 @@ Check out my other courses on [LinkedIn Learning](https://www.linkedin.com/learn
 
 [lil-course-url]: https://www.linkedin.com/learning/vue-js-creating-and-hosting-a-full-stack-site-21646902?dApp=59033956
 [lil-thumbnail-url]: https://media.licdn.com/dms/image/C560DAQFV3JgS5gmX0g/learning-public-crop_675_1200/0/1677892627519?e=2147483647&v=beta&t=mygA_XW7esiHrzMdi5mf72a0S7EFH780xDIlnAWWkS4
+
+https://github.com/LinkedInLearning/vuejs-creating-and-hosting-a-full-stack-site-4359014/tree/main

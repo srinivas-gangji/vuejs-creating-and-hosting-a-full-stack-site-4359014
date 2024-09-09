@@ -2,7 +2,7 @@
   <div class="card">
     <div class="card-image pt-4">
       <figure class="image is-4by3">
-        <img :src="product.imageName" alt="Placeholder image" />
+        <img :src="product.imageUrl" alt="Placeholder image" />
       </figure>
     </div>
     <div class="card-content">
