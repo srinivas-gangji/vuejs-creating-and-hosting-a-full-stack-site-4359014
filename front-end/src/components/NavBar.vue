@@ -27,6 +27,14 @@
       <div class="navbar-end">
         <div class="navbar-item">
           <div class="buttons">
+            <button
+              class="button is-danger"
+              v-if="user"
+              @click.prevent="signOutUser"
+            >
+              Sign Out
+            </button>
+
             <RouterLink to="/cart" class="button" v-if="!props.inCheckout">
               Cart
             </RouterLink>
@@ -41,12 +49,21 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, inject } from "vue";
 import log from "@/assets/logo-hexagon.svg";
-import { RouterLink } from "vue-router";
+import { RouterLink, useRouter } from "vue-router";
+import { getAuth, signOut } from "firebase/auth";
 
 const logo = ref(log);
 const props = defineProps(["inCheckout"]);
+const user = inject("user");
+const router = useRouter();
+
+const signOutUser = async function () {
+  const auth = getAuth();
+  await signOut(auth);
+  router.push("/");
+};
 </script>
 
 <style lang="scss" scoped></style>

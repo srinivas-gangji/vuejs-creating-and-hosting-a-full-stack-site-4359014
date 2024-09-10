@@ -21,17 +21,18 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, inject } from "vue";
 import axios from "axios";
 
 import NavBar from "@/components/NavBar.vue";
 import CartProduct from "@/components/CartProduct.vue";
 
 const cartItemsList = ref([]);
+const user = inject("user");
 
 const fetchShoppingCartItems = async () => {
   try {
-    const response = await axios.get("/api/users/12345/cart");
+    const response = await axios.get(`/api/users/${user.value.uid}/cart`);
     cartItemsList.value = response.data;
   } catch (error) {
     console.log(error);
@@ -40,7 +41,7 @@ const fetchShoppingCartItems = async () => {
 
 const removeItemFromCart = async function (product) {
   try {
-    await axios.delete(`/api/users/12345/cart/${product.id}`);
+    await axios.delete(`/api/users/${user.value.uid}/cart/${product.id}`);
     fetchShoppingCartItems();
   } catch (error) {
     console.log(error);
