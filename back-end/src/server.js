@@ -29,7 +29,7 @@ async function start() {
   app.use("/images", express.static(path.join(__dirname, "../assets")));
 
   app.use(
-    express.static(path.join(__dirname, "../../front-end/dist"), {
+    express.static(path.join(__dirname, "../dist"), {
       maxAge: "1y",
       etag: false,
     })
