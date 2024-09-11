@@ -29,14 +29,14 @@ async function start() {
   app.use("/images", express.static(path.join(__dirname, "../assets")));
 
   app.use(
-    express.static(path.join(__dirname, "../front-end/dist"), {
+    express.static(path.join(__dirname, "../../front-end/dist"), {
       maxAge: "1y",
       etag: false,
     })
   );
 
-  app.get("/", (req, res) => {
-    res.send("Hello World!");
+  app.get("/status", (req, res) => {
+    res.send("I am alive");
   });
 
   app.get("/api/products", async (req, res) => {
@@ -137,10 +137,10 @@ async function start() {
     res.sendFile(path.join(__dirname, "../front-end/dist/index.html"));
   });
 
-  const port = process.env.PORT || 8000;
+  const port = process.env.PORT || 8080;
 
   app.listen(port, () => {
-    console.log("Server running on port 3009");
+    console.log("Server running on port 8080");
   });
 }
 
