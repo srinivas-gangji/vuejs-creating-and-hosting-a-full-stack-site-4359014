@@ -133,6 +133,10 @@ async function start() {
     }
   });
 
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "../front-end/dist/index.html"));
+  });
+
   app.listen(3009, () => {
     console.log("Server running on port 3009");
   });
