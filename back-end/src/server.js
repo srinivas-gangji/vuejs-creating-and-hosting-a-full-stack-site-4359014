@@ -137,7 +137,9 @@ async function start() {
     res.sendFile(path.join(__dirname, "../front-end/dist/index.html"));
   });
 
-  app.listen(3009, () => {
+  const port = process.env.PORT || 8000;
+
+  app.listen(port, () => {
     console.log("Server running on port 3009");
   });
 }
