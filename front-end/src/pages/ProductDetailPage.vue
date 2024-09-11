@@ -77,7 +77,9 @@ const signIn = async function () {
   if (email) {
     const auth = getAuth();
     const actionCodeSettings = {
-      url: "http://localhost:5173/details/" + product.value.id,
+      url:
+        "https://full-stack-vue-sgangji.onrender.com/details/" +
+        product.value.id,
       handleCodeInApp: true,
     };
 
