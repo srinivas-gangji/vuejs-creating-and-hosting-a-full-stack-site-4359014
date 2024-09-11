@@ -28,6 +28,13 @@ async function start() {
   console.log(path.join(__dirname, "../assets"));
   app.use("/images", express.static(path.join(__dirname, "../assets")));
 
+  app.use(
+    express.static(path.join(__dirname, "../front-end/dist"), {
+      maxAge: "1y",
+      etag: false,
+    })
+  );
+
   app.get("/", (req, res) => {
     res.send("Hello World!");
   });
